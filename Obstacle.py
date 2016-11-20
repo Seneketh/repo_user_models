@@ -25,37 +25,43 @@ class ObstacleCube(object):
 
 class ObstacleList(object):
 
-    def __init__(self, maxObstacles, maxLocation, minLocation, gravity, xRange):
+    def __init__(self, maxObstacles, screensize, gravity, cubex, cubey):
         """
 
         :param maxObstacles: maximum amount of obstacles on the list
-        :param maxLocation: upper bound at which an obstacle is destroyed
-        :param minLocation: lower bound where the object is spawned
+        :param screensize: size of the canvas to be projected on
         :param gravity: downward speed of obstacles
-        :param xRange: range where obstacles may appear such that [0, Xrange]
+        :param cubex: integer representing cubewidth
+        :param cubey: integer representing cubeheight
         :return: ObstacleList object
         """
         self.obstacles = []
         self.maxObstacles = maxObstacles
-        self.maxLocation = maxLocation
-        self.minLocation = minLocation
+        self.maxLocation = screensize[1]
+        self.minLocation = 0
         self.gravity = gravity
-        self.xRange = xRange
+        self.xRange = screensize[0]
+        self.cubex = cubex
+        self.cubey = cubey
 
     def populate(self):
         for i in range(self.maxObstacles):
             xpos = randint(0, self.xRange)
-            nextObstacle = ObstacleCube(50, 50, xpos, self.minLocation - self.maxLocation * 1/randint(1, 10))
+            nextObstacle = ObstacleCube(self.cubex, self.cubey, xpos, self.minLocation - (self.maxLocation * 1/randint(1, 10)))
             self.obstacles.append(nextObstacle)
 
 
     def update(self):
         if len(self.obstacles) < self.maxObstacles:
             xpos = randint(0, self.xRange)
-            nextObstacle = ObstacleCube(50, 50, xpos, self.minLocation + randint(0,10))
+            nextObstacle = ObstacleCube(self.cubex, self.cubey, xpos, self.minLocation + randint(0,10))
             self.obstacles.append(nextObstacle)
 
         for cube in self.obstacles:
             if cube.yloc > self.maxLocation:
                 self.obstacles.remove(cube)
             cube.changePostion(self.gravity)
+
+    def restart(self):
+        self.obstacles.clear()
+        self.populate()
