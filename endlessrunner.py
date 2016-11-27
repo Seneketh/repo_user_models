@@ -4,6 +4,9 @@ from gamedisplay import *
 import pygame
 
 screenSize = (800, 800)
+boardres = 32
+
+print(screenSize[0]/boardres)
 
 
 # this block here involves the basic initialisation of pygame
@@ -17,8 +20,8 @@ gameExit = False
 gameQuit = False
 
 # objexts that are in play
-playerbody = PlayerCube(screenSize[0] * 0.1, screenSize[1] * 0.1, 3, screenSize[0]*0.5, screenSize[1]*0.8, screenSize)
-obstacleHandler = ObstacleList(10,screenSize, 10, 50, 70)
+playerbody = PlayerCube(2, 2, 1, boardres/2, boardres-1, boardres)
+obstacleHandler = ObstacleList(3,(boardres, boardres), 0.1, 5, 5)
 
 while not gameExit: # outer loop for quitting
     movement = 0
@@ -28,9 +31,9 @@ while not gameExit: # outer loop for quitting
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
-                    movement = screenSize[0] * 0.01 * playerbody.speed
+                    movement = playerbody.speed
                 if event.key == pygame.K_a:
-                    movement = -screenSize[0] * 0.01 * playerbody.speed
+                    movement = -playerbody.speed
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_d:
                     movement = 0
@@ -52,7 +55,7 @@ while not gameExit: # outer loop for quitting
         playerbody.changePosition(movement)
 
         # graphics call
-        updateScreen(game_display, playerbody, obstacleHandler.obstacles)
+        updateScreen(game_display, playerbody, obstacleHandler.obstacles, screenSize[0]/boardres)
 
 
 
