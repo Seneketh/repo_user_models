@@ -1,4 +1,7 @@
 from random import randint;
+import numpy
+
+screenSize = (800, 800)
 
 class ObstacleCube(object):
 
@@ -45,9 +48,18 @@ class ObstacleList(object):
         self.cubey = cubey
 
     def populate(self):
+        y_pixel_lanes = numpy.arange(0, screenSize[1]/2, screenSize[1]/40)
+        x_pixel_lanes = numpy.arange(0, screenSize[0], screenSize[1]/8)
+
+        #probabilities of lanes:
+        index_x = numpy.random.choice(numpy.arange(0, 8), p=[0.125, 0.125, 0.125, 0.125, 0.125, 0.125 , 0.125 , 0.125])
+        index_y = numpy.random.choice(numpy.arange(0, 20), p=[0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05])
+
+
         for i in range(self.maxObstacles):
-            xpos = randint(0, self.xRange)
-            nextObstacle = ObstacleCube(self.cubex, self.cubey, xpos, self.minLocation - (self.maxLocation * 1/randint(1, 10)))
+            xpos = x_pixel_lanes[index_x]
+            ypos = y_pixel_lanes[index_y]
+            nextObstacle = ObstacleCube(self.cubex, self.cubey, xpos, ypos)
             self.obstacles.append(nextObstacle)
 
 
