@@ -1,3 +1,4 @@
 #Python C layer chunk
 
 *.pyc
+/__pychache__

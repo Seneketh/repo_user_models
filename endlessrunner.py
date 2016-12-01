@@ -23,23 +23,14 @@ gameExit = False
 gameQuit = False
 
 # objexts that are in play
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
->>>>>>> 1355fbf206f406fe839a3608b52f55cd4afdf123
+
 playerbody = PlayerCube(playersize_x, playersize_y, player_speed, screenSize[0]*0.5, screenSize[1]*0.8, screenSize)
 
 
 obstacleHandler = ObstacleList(10,screenSize, 10, screenSize[1]/8 ,screenSize[0]/40 )
 
 # cubex/8 and cubey/40 always result in obstacles that have a grid with 20 lanes in y and 40 lanes in x if resolution is div by 2
-<<<<<<< HEAD
-=======
-=======
-playerbody = PlayerCube(2, 2, 1, boardres/2, boardres-1, boardres)
-obstacleHandler = ObstacleList(3,(boardres, boardres), 0.1, 5, 5)
->>>>>>> e18bfcd2e94310b5d61e50c1aa64366a765b0e94
->>>>>>> 1355fbf206f406fe839a3608b52f55cd4afdf123
+
 
 while not gameExit: # outer loop for quitting
     movement = 0
