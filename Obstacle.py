@@ -28,11 +28,11 @@ class ObstacleCube(object):
 
 class ObstacleList(object):
 
-    def __init__(self, maxObstacles, screensize, gravity, cubex, cubey):
+    def __init__(self, maxObstacles, worldsize, gravity, cubex, cubey):
         """
 
         :param maxObstacles: maximum amount of obstacles on the list
-        :param screensize: size of the canvas to be projected on
+        :param worldsize: tuple representing the scale of the plane to project on
         :param gravity: downward speed of obstacles
         :param cubex: integer representing cubewidth
         :param cubey: integer representing cubeheight
@@ -40,10 +40,10 @@ class ObstacleList(object):
         """
         self.obstacles = []
         self.maxObstacles = maxObstacles
-        self.maxLocation = screensize[1]
+        self.maxLocation = worldsize[1]
         self.minLocation = 0
         self.gravity = gravity
-        self.xRange = screensize[0]
+        self.xRange = worldsize[0]
         self.cubex = cubex
         self.cubey = cubey
 

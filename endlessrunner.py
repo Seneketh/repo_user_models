@@ -6,6 +6,9 @@ import pygame
 from random import randint;
 
 screenSize = (800, 800)
+boardres = 32
+
+print(screenSize[0]/boardres)
 
 playersize_x = screenSize[0] * 0.1
 playersize_y = screenSize[1] * 0.1
@@ -23,12 +26,17 @@ gameExit = False
 gameQuit = False
 
 # objexts that are in play
+<<<<<<< HEAD
 playerbody = PlayerCube(playersize_x, playersize_y, player_speed, screenSize[0]*0.5, screenSize[1]*0.8, screenSize)
 
 
 obstacleHandler = ObstacleList(10,screenSize, 10, screenSize[1]/8 ,screenSize[0]/40 )
 
 # cubex/8 and cubey/40 always result in obstacles that have a grid with 20 lanes in y and 40 lanes in x if resolution is div by 2
+=======
+playerbody = PlayerCube(2, 2, 1, boardres/2, boardres-1, boardres)
+obstacleHandler = ObstacleList(3,(boardres, boardres), 0.1, 5, 5)
+>>>>>>> e18bfcd2e94310b5d61e50c1aa64366a765b0e94
 
 while not gameExit: # outer loop for quitting
     movement = 0
@@ -38,9 +46,9 @@ while not gameExit: # outer loop for quitting
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_d:
-                    movement = screenSize[0] * 0.01 * playerbody.speed
+                    movement = playerbody.speed
                 if event.key == pygame.K_a:
-                    movement = -screenSize[0] * 0.01 * playerbody.speed
+                    movement = -playerbody.speed
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_d:
                     movement = 0
@@ -62,7 +70,7 @@ while not gameExit: # outer loop for quitting
         playerbody.changePosition(movement)
 
         # graphics call
-        updateScreen(game_display, playerbody, obstacleHandler.obstacles)
+        updateScreen(game_display, playerbody, obstacleHandler.obstacles, screenSize[0]/boardres)
 
 
 
