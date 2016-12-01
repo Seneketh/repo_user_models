@@ -68,4 +68,6 @@ while not gameExit: # outer loop for quitting
 
         # updating the display and wating for frame rate
         pygame.display.flip()
-        clock.tick(24)
+        clock.tick(60)
+
+#MAKING DIFFICULT HIGHER BY BLOCK COLOR = BACKGROUND
