@@ -43,36 +43,54 @@ def message_display(text, size , xpos, ypos, pause):
     game_display.blit(TextSurface, TextRectangle) #display it
     pygame.display.flip()
     time.sleep(pause)
+    TextRectCoord = (TextRectangle[0], TextRectangle[0]+TextRectangle[2], TextRectangle[1], TextRectangle[1]+TextRectangle[3])
+    return(TextRectCoord)
 
 def player_death():
     message_display('You died horribly', 90, screenSize[0]/2, screenSize[1]/2, 1)
 
 def Welcome():
-    message_display('Endlessrunner of Doom', 50, screenSize[0]/2, screenSize[1]/2 - 200, 1)
+    return message_display('Endlessrunner of Doom', 50, screenSize[0]/2, screenSize[1]/2 - 200, 0.5)
 
 def Start():
-    message_display('Start Game', 30, screenSize[0]/2, screenSize[1]/2, 0)
+    return message_display('Start Game', 30, screenSize[0]/2, screenSize[1]/2, 0)
+
 
 def Exit():
-    message_display('Exit Game', 30, screenSize[0]/2, screenSize[1]/2 + 50, 0)
+    return message_display('Exit Game', 30, screenSize[0]/2, screenSize[1]/2 + 50, 0)
 
 def performance_counter(time):
-    message_display('You survived'+ str(time) + ' Seconds', 15, 200, 20, 0)
+    message_display('You survived '+ str(time) + ' Seconds', 15, 200, 20, 0)
 
 def Startscreen():
-    text = "Test"
+
     intro = True
     game_display.fill((255,255,255))
     pygame.display.update()
+
     Welcome()
-    Start()
-    Exit()
+
+    StartBox = Start()
+
+    ExitBox = Exit()
+
     pygame.display.update()
     clock.tick(15)
     while intro:
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+
         for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+
+            if mouse[0] > StartBox[0] and mouse[0] < StartBox[1] and mouse[1] > StartBox[2] and mouse[1] < StartBox[3] and click[0] == 1:
                 intro = False
+
+            if mouse[0] > ExitBox[0] and mouse[0] < ExitBox[1] and mouse[1] > ExitBox[2] and mouse[1] < ExitBox[3] and click[0] == 1:
+                quit()
+
+            if event.type == pygame.QUIT:
+                quit()
+
 
 
 def levelLoop():
@@ -95,7 +113,7 @@ def levelLoop():
                     movement = 0
 
             if event.type == pygame.QUIT:
-                levelQuit = True
+                Startscreen()
 
         #checking collisions before updating screen
         collision = playerbody.detectCollision(obstacleHandler.obstacles)
@@ -113,7 +131,7 @@ def levelLoop():
 
         # updating the display and wating for frame rate
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(40)
 
 
 while not gameExit: # outer loop for quitting
