@@ -1,7 +1,19 @@
 from random import randint;
 import numpy
 
-screenSize = (800, 800)
+
+
+def coordMaker(screenSize = (800, 800), xprobabilities = [1/8]*8, yprobabilities = [1/20]*20 ):
+
+    y_pixel_lanes = numpy.arange(0, screenSize[1]/2, screenSize[1]/40)
+    x_pixel_lanes = numpy.arange(0, screenSize[0], screenSize[1]/8)
+
+    #probabilities of lanes:
+    index_x = numpy.random.choice(numpy.arange(0, 8), p = xprobabilities)
+    index_y = numpy.random.choice(numpy.arange(0, 20), p = yprobabilities)
+
+    return (x_pixel_lanes[index_x], y_pixel_lanes[index_y])
+
 
 class ObstacleCube(object):
 
@@ -48,25 +60,22 @@ class ObstacleList(object):
         self.cubey = cubey
 
     def populate(self):
-        y_pixel_lanes = numpy.arange(0, screenSize[1]/2, screenSize[1]/40)
-        x_pixel_lanes = numpy.arange(0, screenSize[0], screenSize[1]/8)
-
-        #probabilities of lanes:
-        index_x = numpy.random.choice(numpy.arange(0, 8), p=[0.125, 0.125, 0.125, 0.125, 0.125, 0.125 , 0.125 , 0.125])
-        index_y = numpy.random.choice(numpy.arange(0, 20), p=[0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05])
-
-
         for i in range(self.maxObstacles):
-            xpos = x_pixel_lanes[index_x]
-            ypos = y_pixel_lanes[index_y]
+            coords = coordMaker()
+
+            xpos = coords[0]
+            ypos = coords[1]
             nextObstacle = ObstacleCube(self.cubex, self.cubey, xpos, ypos)
             self.obstacles.append(nextObstacle)
 
 
     def update(self):
         if len(self.obstacles) < self.maxObstacles:
-            xpos = randint(0, self.xRange)
-            nextObstacle = ObstacleCube(self.cubex, self.cubey, xpos, self.minLocation + randint(0,10))
+            coords = coordMaker()
+
+            xpos = coords[0]
+            ypos = coords[1]
+            nextObstacle = ObstacleCube(self.cubex, self.cubey, xpos, self.minLocation + randint(0,5))
             self.obstacles.append(nextObstacle)
 
         for cube in self.obstacles:
