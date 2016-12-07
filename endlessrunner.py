@@ -1,6 +1,7 @@
 
 from player import *
 from Obstacle import *
+#import timeit
 from gamedisplay import *
 from numpy import *
 import pygame
@@ -8,6 +9,7 @@ import time
 from random import randint;
 
 screenSize = (800, 800)
+framerate = 50
 playersize_x = screenSize[0] * 0.08
 playersize_y = screenSize[1] * 0.08
 player_speed = 2
@@ -42,12 +44,14 @@ def message_display(text, size , xpos, ypos, pause):
     TextSurface, TextRectangle = text_objects(text, TextConf)
     TextRectangle.center = (xpos, ypos)
     game_display.blit(TextSurface, TextRectangle) #display it
-    pygame.display.flip()
+    ##pygame.display.flip()
     time.sleep(pause)
     TextRectCoord = (TextRectangle[0], TextRectangle[0]+TextRectangle[2], TextRectangle[1], TextRectangle[1]+TextRectangle[3])
     return(TextRectCoord)
 
 def player_death():
+    performancetimer = time.process_time()
+    performancetimer = time.process_time() - performancetimer
     message_display('You died horribly', 90, screenSize[0]/2, screenSize[1]/2, 1)
 
 def Welcome():
@@ -97,9 +101,12 @@ def Startscreen():
 def levelLoop():
     levelQuit = False
     movement = 0 #gets only initialized here. is used in level loop
+    performancetimer = 0
+
 
     while not levelQuit: #inner  loop for the levels
-        performance_counter(time.process_time()) #TODO FIX gets redrawn after each collition detectCollision all the time
+        performancetimer += 1/framerate
+        #elapsed_time = time.process_time() - t
 
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -121,6 +128,7 @@ def levelLoop():
         if collision:
             movement = 0
             obstacleHandler.restart()
+            performancetimer = 0
 
             player_death()
 
@@ -129,10 +137,12 @@ def levelLoop():
 
         # graphics call
         updateScreen(game_display, playerbody, obstacleHandler.obstacles)
+        performance_counter(performancetimer) #TODO FIX gets redrawn after each collition detectCollision all the time
+
 
         # updating the display and wating for frame rate
         pygame.display.flip()
-        clock.tick(60)
+        clock.tick(framerate)
 
 
 while not gameExit: # outer loop for quitting
