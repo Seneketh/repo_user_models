@@ -1,5 +1,5 @@
-from player import *
 
+from player import *
 from Obstacle import *
 from gamedisplay import *
 from numpy import *
@@ -10,7 +10,7 @@ from random import randint;
 screenSize = (800, 800)
 playersize_x = screenSize[0] * 0.08
 playersize_y = screenSize[1] * 0.08
-player_speed = 3
+player_speed = 2
 
 
 # this block here involves the basic initialisation of pygame
@@ -23,7 +23,7 @@ pygame.display.set_caption('Endlessrunner of Doom')
 gameExit = False
 
 gameLevel = 0
-death_pause = 1
+
 
 
 # objexts that are in play
@@ -31,6 +31,7 @@ playerbody = PlayerCube(playersize_x, playersize_y, player_speed, screenSize[0]*
 obstacleHandler = ObstacleList(10,screenSize, 10, screenSize[1]/8 ,screenSize[0]/40 )
 
 # cubex/8 and cubey/40 always result in obstacles that have a grid with 20 lanes in y and 40 lanes in x if resolution is div by 2
+
 
 def text_objects(text, TextConf):
     TextSurface = pygame.font.Font.render(TextConf, text, True, black)
@@ -76,6 +77,7 @@ def Startscreen():
 
     pygame.display.update()
     clock.tick(15)
+
     while intro:
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
@@ -90,7 +92,6 @@ def Startscreen():
 
             if event.type == pygame.QUIT:
                 quit()
-
 
 
 def levelLoop():
@@ -131,7 +132,7 @@ def levelLoop():
 
         # updating the display and wating for frame rate
         pygame.display.flip()
-        clock.tick(40)
+        clock.tick(60)
 
 
 while not gameExit: # outer loop for quitting
