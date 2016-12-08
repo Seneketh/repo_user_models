@@ -1,12 +1,12 @@
 from random import randint;
 import numpy
 
+def coordMaker(screenSize, xprobabilities = [1/8]*8, yprobabilities = [1/20]*20 ):
 
+    x_pixel_lanes = numpy.arange(0, screenSize[0], screenSize[0]/(len(xprobabilities)))
+    y_pixel_lanes = numpy.arange(0, screenSize[1]/2, screenSize[1]/(len(yprobabilities)*2))
 
-def coordMaker(screenSize = (800, 800), xprobabilities = [1/8]*8, yprobabilities = [1/20]*20 ):
-
-    y_pixel_lanes = numpy.arange(0, screenSize[1]/2, screenSize[1]/40)
-    x_pixel_lanes = numpy.arange(0, screenSize[0], screenSize[1]/8)
+    x_pixel_lanes = x_pixel_lanes + (screenSize[0]/8)/2
 
     #probabilities of lanes:
     index_x = numpy.random.choice(numpy.arange(0, 8), p = xprobabilities)
@@ -51,6 +51,7 @@ class ObstacleList(object):
         :return: ObstacleList object
         """
         self.obstacles = []
+        self.screenSize = screensize
         self.maxObstacles = maxObstacles
         self.maxLocation = screensize[1]
         self.minLocation = 0
@@ -61,7 +62,7 @@ class ObstacleList(object):
 
     def populate(self):
         for i in range(self.maxObstacles):
-            coords = coordMaker()
+            coords = coordMaker(self.screenSize)
 
             xpos = coords[0]
             ypos = coords[1]
@@ -71,11 +72,11 @@ class ObstacleList(object):
 
     def update(self):
         if len(self.obstacles) < self.maxObstacles:
-            coords = coordMaker()
+            coords = coordMaker(self.screenSize)
 
             xpos = coords[0]
             ypos = coords[1]
-            nextObstacle = ObstacleCube(self.cubex, self.cubey, xpos, self.minLocation + randint(0,5))
+            nextObstacle = ObstacleCube(self.cubex, self.cubey, xpos, self.minLocation + randint(0,2))
             self.obstacles.append(nextObstacle)
 
         for cube in self.obstacles:

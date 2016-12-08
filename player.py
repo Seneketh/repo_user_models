@@ -1,6 +1,6 @@
 
 class PlayerCube(object):
-    def __init__(self, xsize, ysize, speed, xloc, yloc, screensize):
+    def __init__(self, xsize, ysize, speed, xloc, yloc, screenSize):
         """
         :param xsize: width size in pixels (should maybe change to screen size later)
         :param ysize: length size in pixels (should maybe change to screen size later)
@@ -14,7 +14,7 @@ class PlayerCube(object):
         self.speed = speed
         self.xloc = xloc
         self.yloc = yloc
-        self.screensize = screensize
+        self.screensize = screenSize
 
     def changePosition(self, xchan):
         """
@@ -37,6 +37,3 @@ class PlayerCube(object):
                 elif self.xloc + self.xsize/2 > cube.xloc - bounds >= self.xloc - self.xsize/2:
                     return (True)
         return False
-
-
-
