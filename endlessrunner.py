@@ -21,7 +21,8 @@ obstacle_speed = 15
 # this block here involves the basic initialisation of pygame
 pygame.init() # module inititiation
 clock = pygame.time.Clock() # defining a clock for controlling frame rate
-game_display = pygame.display.set_mode(screenSize, pygame.HWSURFACE | pygame.FULLSCREEN ) #creating a display box
+game_display = pygame.display.set_mode(screenSize, pygame.HWSURFACE  ) #creating a display box
+# | pygame.FULLSCREEN
 
 pygame.display.set_caption('Endlessrunner of Doom')
 
@@ -36,6 +37,9 @@ obstacleHandler = ObstacleList(obstacle_amount, screenSize, obstacle_speed, scre
 
 # cubex/8 and cubey/40 always result in obstacles that have a grid with 20 lanes in y and 40 lanes in x if resolution is div by 2
 
+# Data storage
+dataDict_list = [0]
+levelCount = 0
 
 def text_objects(text, TextConf, color):
     TextSurface = pygame.font.Font.render(TextConf, text, True, color)
@@ -56,13 +60,18 @@ def player_death():
     performancetimer = time.process_time() - performancetimer
     message_display('You died horribly', 90, screenSize[0]/2, screenSize[1]/2, 1, black)
 
+    # storing data
+    global levelCount
+    dataDict_list.append( {'level': levelCount, 'performance': performancetimer} )
+    levelCount += 1 # new level
+    print("Now starting level:", levelCount)
+    
 
 def Welcome():
     return message_display('Endlessrunner of Doom', 50, screenSize[0]/2, screenSize[1]/2 - 200, 0.5, black)
 
 def Start():
     return message_display('Start Game', 30, screenSize[0]/2, screenSize[1]/2, 0, black)
-
 
 def Exit():
     return message_display('Exit Game', 30, screenSize[0]/2, screenSize[1]/2 + 50, 0, black)
@@ -112,8 +121,7 @@ def levelLoop():
     levelQuit = False
     movement = 0 #gets only initialized here. is used in level loop
     performancetimer = 0
-
-
+          
     while not levelQuit: #inner  loop for the levels
         performancetimer += 1/framerate
         #elapsed_time = time.process_time() - t
