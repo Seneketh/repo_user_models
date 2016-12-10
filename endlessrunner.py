@@ -7,6 +7,7 @@ from numpy import *
 import pygame
 import time
 from random import randint;
+import csv # data handling
 
 #screenSize = (1600, 1200)
 screenSize = (1366, 768)
@@ -38,7 +39,7 @@ obstacleHandler = ObstacleList(obstacle_amount, screenSize, obstacle_speed, scre
 # cubex/8 and cubey/40 always result in obstacles that have a grid with 20 lanes in y and 40 lanes in x if resolution is div by 2
 
 # Data storage
-dataDict_list = [0]
+dataDict_list = []
 levelCount = 0
 
 def text_objects(text, TextConf, color):
@@ -62,9 +63,10 @@ def player_death():
 
     # storing data
     global levelCount
-    dataDict_list.append( {'level': levelCount, 'performance': performancetimer} )
+    dataDict_list.append( {'level': levelCount, 'performance': "placeholder"} )
     levelCount += 1 # new level
     print("Now starting level:", levelCount)
+    print(dataDict_list)
     
 
 def Welcome():
@@ -75,7 +77,7 @@ def Start():
 
 def Exit():
     return message_display('Exit Game', 30, screenSize[0]/2, screenSize[1]/2 + 50, 0, black)
-
+    
 def performance_counter(time):
     message_display('You survived '+ str(round(time, 1)) + ' Seconds', 20, 140, 15, 0, red)
 
@@ -111,6 +113,15 @@ def Startscreen():
 
 
             if mouse[0] > ExitBox[0] and mouse[0] < ExitBox[1] and mouse[1] > ExitBox[2] and mouse[1] < ExitBox[3] and click[0] == 1:
+                print("Exit")
+
+                # save data to file
+                fieldnames = sorted(list(set(k for d in dataDict_list for k in d)))
+                with open("data.csv", 'w') as out_file:
+                    writer = csv.DictWriter(out_file, fieldnames=fieldnames, dialect='excel')
+                    writer.writeheader()
+                    writer.writerows(dataDict_list)
+                            
                 quit()
 
             if event.type == pygame.QUIT:
@@ -171,5 +182,5 @@ while not gameExit: # outer loop for quitting
     obstacleHandler.restart()
     Startscreen()
     levelLoop()
-
+    
     quit()
