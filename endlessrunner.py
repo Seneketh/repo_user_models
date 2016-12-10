@@ -60,15 +60,7 @@ def player_death():
     performancetimer = time.process_time()
     performancetimer = time.process_time() - performancetimer
     message_display('You died horribly', 90, screenSize[0]/2, screenSize[1]/2, 1, black)
-
-    # storing data
-    global levelCount
-    dataDict_list.append( {'level': levelCount, 'performance': "placeholder"} )
-    levelCount += 1 # new level
-    print("Now starting level:", levelCount)
-    print(dataDict_list)
     
-
 def Welcome():
     return message_display('Endlessrunner of Doom', 50, screenSize[0]/2, screenSize[1]/2 - 200, 0.5, black)
 
@@ -115,7 +107,7 @@ def Startscreen():
             if mouse[0] > ExitBox[0] and mouse[0] < ExitBox[1] and mouse[1] > ExitBox[2] and mouse[1] < ExitBox[3] and click[0] == 1:
                 print("Exit")
 
-                # save data to file
+                # save all data to file
                 fieldnames = sorted(list(set(k for d in dataDict_list for k in d)))
                 with open("data.csv", 'w') as out_file:
                     writer = csv.DictWriter(out_file, fieldnames=fieldnames, dialect='excel')
@@ -157,6 +149,13 @@ def levelLoop():
         #checking collisions before updating screen
         collision = playerbody.detectCollision(obstacleHandler.obstacles)
         if collision:
+
+            # storing data
+            global levelCount
+            dataDict_list.append( {'level': levelCount, 'perf_time': performancetimer, 'mov': movement} )
+            levelCount += 1 # new level
+            print(dataDict_list)
+            
             movement = 0
             obstacleHandler.restart()
             performancetimer = 0
@@ -169,7 +168,6 @@ def levelLoop():
         # graphics call
         updateScreen(game_display, playerbody, obstacleHandler.obstacles)
         performance_counter(performancetimer) #TODO FIX gets redrawn after each collition detectCollision all the time
-
 
         # updating the display and wating for frame rate
         pygame.display.flip()
