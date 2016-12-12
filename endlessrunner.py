@@ -7,6 +7,7 @@ from numpy import *
 import pygame
 import time
 from random import randint;
+import csv # data handling
 
 #screenSize = (1600, 1200)
 screenSize = (1366, 768)
@@ -21,7 +22,8 @@ obstacle_speed = 15
 # this block here involves the basic initialisation of pygame
 pygame.init() # module inititiation
 clock = pygame.time.Clock() # defining a clock for controlling frame rate
-game_display = pygame.display.set_mode(screenSize, pygame.HWSURFACE | pygame.FULLSCREEN ) #creating a display box
+game_display = pygame.display.set_mode(screenSize, pygame.HWSURFACE  ) #creating a display box
+# | pygame.FULLSCREEN
 
 pygame.display.set_caption('Endlessrunner of Doom')
 
@@ -36,6 +38,9 @@ obstacleHandler = ObstacleList(obstacle_amount, screenSize, obstacle_speed, scre
 
 # cubex/8 and cubey/40 always result in obstacles that have a grid with 20 lanes in y and 40 lanes in x if resolution is div by 2
 
+# Data storage
+dataDict_list = []
+levelCount = 0
 
 def text_objects(text, TextConf, color):
     TextSurface = pygame.font.Font.render(TextConf, text, True, color)
@@ -55,18 +60,16 @@ def player_death():
     performancetimer = time.process_time()
     performancetimer = time.process_time() - performancetimer
     message_display('You died horribly', 90, screenSize[0]/2, screenSize[1]/2, 1, black)
-
-
+    
 def Welcome():
     return message_display('Endlessrunner of Doom', 50, screenSize[0]/2, screenSize[1]/2 - 200, 0.5, black)
 
 def Start():
     return message_display('Start Game', 30, screenSize[0]/2, screenSize[1]/2, 0, black)
 
-
 def Exit():
     return message_display('Exit Game', 30, screenSize[0]/2, screenSize[1]/2 + 50, 0, black)
-
+    
 def performance_counter(time):
     message_display('You survived '+ str(round(time, 1)) + ' Seconds', 20, 140, 15, 0, red)
 
@@ -102,6 +105,15 @@ def Startscreen():
 
 
             if mouse[0] > ExitBox[0] and mouse[0] < ExitBox[1] and mouse[1] > ExitBox[2] and mouse[1] < ExitBox[3] and click[0] == 1:
+                print("Exit")
+
+                # save all data to file
+                fieldnames = sorted(list(set(k for d in dataDict_list for k in d)))
+                with open("data.csv", 'w') as out_file:
+                    writer = csv.DictWriter(out_file, fieldnames=fieldnames, dialect='excel')
+                    writer.writeheader()
+                    writer.writerows(dataDict_list)
+                            
                 quit()
 
             if event.type == pygame.QUIT:
@@ -112,8 +124,7 @@ def levelLoop():
     levelQuit = False
     movement = 0 #gets only initialized here. is used in level loop
     performancetimer = 0
-
-
+          
     while not levelQuit: #inner  loop for the levels
         performancetimer += 1/framerate
         #elapsed_time = time.process_time() - t
@@ -138,6 +149,13 @@ def levelLoop():
         #checking collisions before updating screen
         collision = playerbody.detectCollision(obstacleHandler.obstacles)
         if collision:
+
+            # storing data
+            global levelCount
+            dataDict_list.append( {'level': levelCount, 'perf_time': performancetimer, 'mov': movement} )
+            levelCount += 1 # new level
+            print(dataDict_list)
+            
             movement = 0
             obstacleHandler.restart()
             performancetimer = 0
@@ -151,7 +169,6 @@ def levelLoop():
         updateScreen(game_display, playerbody, obstacleHandler.obstacles)
         performance_counter(performancetimer) #TODO FIX gets redrawn after each collition detectCollision all the time
 
-
         # updating the display and wating for frame rate
         pygame.display.flip()
         clock.tick(framerate)
@@ -163,5 +180,5 @@ while not gameExit: # outer loop for quitting
     obstacleHandler.restart()
     Startscreen()
     levelLoop()
-
+    
     quit()
