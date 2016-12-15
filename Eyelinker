@@ -1,0 +1,7 @@
+import pylink
+
+
+def getTracker():
+    return pylink.EyeLink()
+
+pylink.openGraphics()

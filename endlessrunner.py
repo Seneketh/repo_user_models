@@ -8,9 +8,10 @@ import pygame
 import time
 from random import randint;
 import csv # data handling
+import Eyelinker
 
-#screenSize = (1600, 1200)
-screenSize = (1366, 768)
+screenSize = (1600, 1200)
+#screenSize = (1366, 768)
 #screenSize = (800, 600)
 framerate = 60
 playersize_x = screenSize[0] * 0.05
@@ -18,19 +19,29 @@ playersize_y = screenSize[0] * 0.05
 player_speed = 2.5
 obstacle_amount = 12
 obstacle_speed = 15
+eyesize = 0
+sizes = []
+
+
 
 # this block here involves the basic initialisation of pygame
 pygame.init() # module inititiation
 clock = pygame.time.Clock() # defining a clock for controlling frame rate
 game_display = pygame.display.set_mode(screenSize, pygame.HWSURFACE  ) #creating a display box
 # | pygame.FULLSCREEN
-
+pygame.display.init()
 pygame.display.set_caption('Endlessrunner of Doom')
 
 # variables for controlling the loop
 gameExit = False
 gameLevel = 0
 
+surf = pygame.display.get_surface()
+rectanglethateyetrackerneeds = surf.get_rect()
+width = rectanglethateyetrackerneeds.w
+height = rectanglethateyetrackerneeds.h
+Eyeconnection = Eyelinker.Eyehandler(screenSize[0], screenSize[1])
+Eyeconnection.doSetup()
 
 # objexts that are in play
 playerbody = PlayerCube(playersize_x, playersize_y, player_speed, screenSize[0]*0.5, screenSize[1] - playersize_y , screenSize)
@@ -46,7 +57,7 @@ def text_objects(text, TextConf, color):
     TextSurface = pygame.font.Font.render(TextConf, text, True, color)
     return TextSurface, TextSurface.get_rect()
 
-def message_display(text, size , xpos, ypos, pause, color):
+def message_display(text, size ,xpos ,ypos, pause, color):
     TextConf = pygame.font.Font('freesansbold.ttf', size)
     TextSurface, TextRectangle = text_objects(text, TextConf, color)
     TextRectangle.center = (xpos, ypos)
@@ -57,8 +68,8 @@ def message_display(text, size , xpos, ypos, pause, color):
     return(TextRectCoord)
 
 def player_death():
-    performancetimer = time.process_time()
-    performancetimer = time.process_time() - performancetimer
+    performancetimer = time.time()
+    performancetimer = time.time() - performancetimer
     message_display('You died horribly', 90, screenSize[0]/2, screenSize[1]/2, 1, black)
     
 def Welcome():
@@ -71,7 +82,7 @@ def Exit():
     return message_display('Exit Game', 30, screenSize[0]/2, screenSize[1]/2 + 50, 0, black)
     
 def performance_counter(time):
-    message_display('You survived '+ str(round(time, 1)) + ' Seconds', 20, 140, 15, 0, red)
+    message_display('You survived '+ str(obstacleHandler.gravity) + ' Seconds', 20, 140, 15, 0, red)
 
 def Startscreen():
 
@@ -124,7 +135,7 @@ def levelLoop():
     levelQuit = False
     movement = 0 #gets only initialized here. is used in level loop
     performancetimer = 0
-          
+    
     while not levelQuit: #inner  loop for the levels
         performancetimer += 1/framerate
         #elapsed_time = time.process_time() - t
@@ -148,6 +159,22 @@ def levelLoop():
 
         #checking collisions before updating screen
         collision = playerbody.detectCollision(obstacleHandler.obstacles)
+        
+        ##getiing stuff from eyetracker
+        global eyesize
+        eyesize = Eyeconnection.getInfo()
+        if(mean(sizes) > eyesize):
+            obstacleHandler.gravity = obstacleHandler.gravity + 1
+        elif(mean(sizes) < eyesize) and obstacleHandler.gravity > 1:
+            obstacleHandler.gravity = obstacleHandler.gravity - 1
+            
+        global sizes
+        sizes.append(eyesize)
+        
+        
+        
+        
+          
         if collision:
 
             # storing data
@@ -173,6 +200,7 @@ def levelLoop():
         pygame.display.flip()
         clock.tick(framerate)
 
+Eyeconnection.letsGetThePartyStarted()
 
 while not gameExit: # outer loop for quitting
 
@@ -182,3 +210,4 @@ while not gameExit: # outer loop for quitting
     levelLoop()
     
     quit()
+    

@@ -1,7 +1,7 @@
 from random import randint;
 import numpy
 
-def coordMaker(screenSize, xprobabilities = [1/8]*8, yprobabilities = [1/20]*20 ):
+def coordMaker(screenSize, xprobabilities = [float(1)/8]*8, yprobabilities = [float(1)/20]*20 ):
 
     x_pixel_lanes = numpy.arange(0, screenSize[0], screenSize[0]/(len(xprobabilities)))
     y_pixel_lanes = numpy.arange(0, screenSize[1]/2, screenSize[1]/(len(yprobabilities)*2))
@@ -85,5 +85,5 @@ class ObstacleList(object):
             cube.changePostion(self.gravity)
 
     def restart(self):
-        self.obstacles.clear()
+        self.obstacles = []
         self.populate()
