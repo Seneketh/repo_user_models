@@ -1,4 +1,3 @@
-
 from player import *
 from Obstacle import *
 #import timeit
@@ -13,12 +12,12 @@ import Eyelinker
 screenSize = (1600, 1200)
 #screenSize = (1366, 768)
 #screenSize = (800, 600)
-framerate = 60
+framerate = 100
 playersize_x = screenSize[0] * 0.05
 playersize_y = screenSize[0] * 0.05
 player_speed = 2.5
 obstacle_amount = 12
-obstacle_speed = 15
+obstacle_speed = 35
 
 
 eyesize = 0
@@ -29,8 +28,8 @@ sizes = []
 # this block here involves the basic initialisation of pygame
 pygame.init() # module inititiation
 clock = pygame.time.Clock() # defining a clock for controlling frame rate
-game_display = pygame.display.set_mode(screenSize, pygame.HWSURFACE  ) #creating a display box
-# | pygame.FULLSCREEN
+game_display = pygame.display.set_mode(screenSize, pygame.HWSURFACE | pygame.FULLSCREEN ) #creating a display box
+# 
 pygame.display.init()
 pygame.display.set_caption('Endlessrunner of Doom')
 
@@ -69,8 +68,7 @@ def message_display(text, size ,xpos ,ypos, pause, color):
     return(TextRectCoord)
 
 def player_death():
-    performancetimer = time.time()
-    performancetimer = time.time() - performancetimer
+
     message_display('You died horribly', 90, screenSize[0]/2, screenSize[1]/2, 1, black)
 
 def Welcome():
@@ -83,7 +81,7 @@ def Exit():
     return message_display('Exit Game', 30, screenSize[0]/2, screenSize[1]/2 + 50, 0, black)
 
 def performance_counter(time):
-    message_display('You survived '+ str(obstacleHandler.gravity) + ' Seconds', 20, 140, 15, 0, red)
+    message_display('You survived '+ str(time) + ' Seconds', 20, 140, 15, 0, red)
 
 def Startscreen():
 
@@ -121,10 +119,10 @@ def Startscreen():
 
                 # save all data to file
                 fieldnames = sorted(list(set(k for d in dataDict_list for k in d)))
-                with open("dilations_endlessrunner.csv", 'w') as out_file:
-                writer = csv.DictWriter(out_file, fieldnames=fieldnames, dialect='excel')
-                writer.writeheader()
-                writer.writerows(dataDict_list)
+                with open("cooldat_dilations_endlessrunner.csv", 'w') as out_file:
+                    writer = csv.DictWriter(out_file, fieldnames=fieldnames, dialect='excel')
+                    writer.writeheader()
+                    writer.writerows(dataDict_list)
 
 
                 quit()
@@ -139,7 +137,7 @@ def levelLoop():
     performancetimer = 0
 
     while not levelQuit: #inner  loop for the levels
-        performancetimer += 1/framerate
+        performancetimer = performancetimer + 1/60 * 1.0
         #elapsed_time = time.process_time() - t
 
         for event in pygame.event.get():
@@ -178,7 +176,7 @@ def levelLoop():
             # storing data
             global levelCount
 
-            dataDict_list.append( {'level': levelCount, 'pupilsize': sizes} )
+            dataDict_list.append( {'level': levelCount, 'performance': performancetimer, 'pupilsize': sizes} )
             levelCount += 1 # new level
             #print(dataDict_list)
 
@@ -192,9 +190,12 @@ def levelLoop():
         playerbody.changePosition(movement)
 
         # graphics call
-        updateScreen(game_display, playerbody, obstacleHandler.obstacles)
-        performance_counter(performancetimer) #TODO FIX gets redrawn after each collition detectCollision all the time
+        
+        performancetimer = time.clock()
 
+        updateScreen(game_display, playerbody, obstacleHandler.obstacles)
+        performance_counter(performancetimer) 
+        
         # updating the display and wating for frame rate
         pygame.display.flip()
         clock.tick(framerate)
