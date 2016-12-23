@@ -19,6 +19,8 @@ playersize_y = screenSize[0] * 0.05
 player_speed = 2.5
 obstacle_amount = 12
 obstacle_speed = 15
+
+
 eyesize = 0
 sizes = []
 
@@ -40,6 +42,7 @@ surf = pygame.display.get_surface()
 rectanglethateyetrackerneeds = surf.get_rect()
 width = rectanglethateyetrackerneeds.w
 height = rectanglethateyetrackerneeds.h
+
 Eyeconnection = Eyelinker.Eyehandler(screenSize[0], screenSize[1])
 Eyeconnection.doSetup()
 
@@ -49,9 +52,7 @@ obstacleHandler = ObstacleList(obstacle_amount, screenSize, obstacle_speed, scre
 
 # cubex/8 and cubey/40 always result in obstacles that have a grid with 20 lanes in y and 40 lanes in x if resolution is div by 2
 
-# Data storage
-dataDict_list = []
-levelCount = 0
+
 
 def text_objects(text, TextConf, color):
     TextSurface = pygame.font.Font.render(TextConf, text, True, color)
@@ -71,7 +72,7 @@ def player_death():
     performancetimer = time.time()
     performancetimer = time.time() - performancetimer
     message_display('You died horribly', 90, screenSize[0]/2, screenSize[1]/2, 1, black)
-    
+
 def Welcome():
     return message_display('Endlessrunner of Doom', 50, screenSize[0]/2, screenSize[1]/2 - 200, 0.5, black)
 
@@ -80,7 +81,7 @@ def Start():
 
 def Exit():
     return message_display('Exit Game', 30, screenSize[0]/2, screenSize[1]/2 + 50, 0, black)
-    
+
 def performance_counter(time):
     message_display('You survived '+ str(obstacleHandler.gravity) + ' Seconds', 20, 140, 15, 0, red)
 
@@ -120,11 +121,12 @@ def Startscreen():
 
                 # save all data to file
                 fieldnames = sorted(list(set(k for d in dataDict_list for k in d)))
-                with open("data.csv", 'w') as out_file:
-                    writer = csv.DictWriter(out_file, fieldnames=fieldnames, dialect='excel')
-                    writer.writeheader()
-                    writer.writerows(dataDict_list)
-                            
+                with open("dilations_endlessrunner.csv", 'w') as out_file:
+                writer = csv.DictWriter(out_file, fieldnames=fieldnames, dialect='excel')
+                writer.writeheader()
+                writer.writerows(dataDict_list)
+
+
                 quit()
 
             if event.type == pygame.QUIT:
@@ -135,7 +137,7 @@ def levelLoop():
     levelQuit = False
     movement = 0 #gets only initialized here. is used in level loop
     performancetimer = 0
-    
+
     while not levelQuit: #inner  loop for the levels
         performancetimer += 1/framerate
         #elapsed_time = time.process_time() - t
@@ -159,30 +161,27 @@ def levelLoop():
 
         #checking collisions before updating screen
         collision = playerbody.detectCollision(obstacleHandler.obstacles)
-        
+
         ##getiing stuff from eyetracker
         global eyesize
         eyesize = Eyeconnection.getInfo()
-        if(mean(sizes) > eyesize):
-            obstacleHandler.gravity = obstacleHandler.gravity + 1
-        elif(mean(sizes) < eyesize) and obstacleHandler.gravity > 1:
-            obstacleHandler.gravity = obstacleHandler.gravity - 1
-            
+        # if(mean(sizes) > eyesize):
+        #     obstacleHandler.gravity = obstacleHandler.gravity + 1
+        # elif(mean(sizes) < eyesize) and obstacleHandler.gravity > 1:
+        #     obstacleHandler.gravity = obstacleHandler.gravity - 1
+
         global sizes
         sizes.append(eyesize)
-        
-        
-        
-        
-          
+
         if collision:
 
             # storing data
             global levelCount
-            dataDict_list.append( {'level': levelCount, 'perf_time': performancetimer, 'mov': movement} )
+
+            dataDict_list.append( {'level': levelCount, 'pupilsize': sizes} )
             levelCount += 1 # new level
-            print(dataDict_list)
-            
+            #print(dataDict_list)
+
             movement = 0
             obstacleHandler.restart()
             performancetimer = 0
@@ -200,6 +199,12 @@ def levelLoop():
         pygame.display.flip()
         clock.tick(framerate)
 
+
+
+# Data storage
+dataDict_list = []
+levelCount = 1
+
 Eyeconnection.letsGetThePartyStarted()
 
 while not gameExit: # outer loop for quitting
@@ -207,7 +212,7 @@ while not gameExit: # outer loop for quitting
 
     obstacleHandler.restart()
     Startscreen()
+
     levelLoop()
-    
+
     quit()
-    
