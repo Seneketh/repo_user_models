@@ -1,4 +1,4 @@
-from pylink import *
+#from pylink import *
 import pygame
 
 class Eyehandler(object):

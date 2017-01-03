@@ -8,8 +8,8 @@ green = (0, 255, 0)
 blue = (0,0,255)
 selected = (255, 0, 0)
 red = (255, 0, 0)
-
-
+menu_background = (100, 100, 100)
+white = (255, 255, 255)
 
 def updateScreen(game_display, playerbody, obstacles):
     game_display.fill(bgcolor)
