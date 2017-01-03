@@ -1,6 +1,6 @@
 import pygame
 from Textwriter import *
-from test import *
+
 
 class Gameloops(object):
 
