@@ -50,12 +50,6 @@ class Gameloops(object):
 
 
                 if mouse[0] > ExitBox[0] and mouse[0] < ExitBox[1] and mouse[1] > ExitBox[2] and mouse[1] < ExitBox[3] and click[0] == 1:
-                    # save all data to file
-                    # fieldnames = sorted(list(set(k for d in dataDict_list for k in d)))
-                    # with open("cooldat_dilations_endlessrunner.csv", 'w') as out_file:
-                    #     writer = csv.DictWriter(out_file, fieldnames=fieldnames, dialect='excel')
-                    #     writer.writeheader()
-                    #     writer.writerows(dataDict_list)
 
                     quit()
 
@@ -112,7 +106,7 @@ class Gameloops(object):
                         self.exp_tools.datasaver()
 
                         self.startscreen()
-                        
+
                     if event.key == pygame.K_d:
                         movement = self.screenSize[0] * 0.01 * self.playerbody.speed
                     if event.key == pygame.K_a:
@@ -134,23 +128,11 @@ class Gameloops(object):
 
             self.exp_tools.pupdil_apnd()
 
-            ##getting stuff from eyetracker
-
-            # eyesize = self.eyeconnection.getInfo()
-            # if(mean(sizes) > eyesize):
-            #     obstacleHandler.gravity = obstacleHandler.gravity + 1
-            # elif(mean(sizes) < eyesize) and obstacleHandler.gravity > 1:
-            #     obstacleHandler.gravity = obstacleHandler.gravity - 1
-
-            # global sizes
-            # sizes.append(eyesize)
-
             if collision:
 
                 self.exp_tools.gameTime += self.exp_tools.levelTime
 
                 self.exp_tools.datalogger()
-
 
                 #level reset:
                 movement = 0
@@ -163,8 +145,6 @@ class Gameloops(object):
             self.playerbody.changePosition(movement)
 
             # graphics call
-
-
             updateScreen(self.game_display, self.playerbody, self.obstacleHandler.obstacles)
             self.textwriting.performance_counter(round(self.exp_tools.levelTime, 3))
 
