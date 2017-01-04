@@ -1,4 +1,5 @@
 #from pylink import *
+# MUST BE UNCOMMENTED WHEN WHEN WORKING WITH EYETRACKER!!
 import pygame
 
 class Eyehandler(object):
@@ -47,7 +48,7 @@ class Eyehandler(object):
         return sample.getLeftEye().getPupilSize()
 
 
-    def letsGetThePartyStarted(self):
+    def endSetup(self):
         getEYELINK().startRecording(1,1,1,1)
         pylink.closeGraphics()
 

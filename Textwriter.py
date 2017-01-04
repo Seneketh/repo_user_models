@@ -18,7 +18,7 @@ class Textwriter(object):
     def instructions(self):
         font = pygame.font.Font('freesansbold.ttf', self.screenSize[0]/45)
 
-        string = "You will now play a training phase to get used to the game. Relax and enjoy the game.\n\n\n\n\nYou will now play a training phase to get used to the game. Relax and enjoy the game.\n\n\n\n\n"
+        string = "This space is for the instructions for the experiment\n\n\n\n\nYou will now play a training phase to get used to the game. Relax and enjoy the game.\n\n\n\n\n"
 
         rect = pygame.Rect(( self.screenSize[0]*0.1,  self.screenSize[1]*0.1, self.screenSize[0]*0.85,  self.screenSize[1]*0.7))
 

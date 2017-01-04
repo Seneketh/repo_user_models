@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from numpy import *
 from random import randint;
 import pygame
@@ -10,7 +12,7 @@ from gamedisplay import *
 import Eyelinker
 from Textwriter import *
 from Gameloops import *
-
+from Exptools import *
 
 ##GAME PARAMETERS##
 #screenSize = (1600, 1200)
@@ -41,25 +43,22 @@ pygame.display.set_caption('Endlessrunner of Doom')
 # height = rectanglethateyetrackerneeds.h
 
 
-##EYETRACKER STUFF##
-Eyeconnection = 0 #just so I can work without actually importing eytracker stuff
-# Eyeconnection = Eyelinker.Eyehandler(screenSize[0], screenSize[1])
-# Eyeconnection.doSetup()
-# Eyeconnection.letsGetThePartyStarted()
-##
-
 ##OBJECTS INITIALIZATION##
+# eyeconnection = Eyelinker.Eyehandler(screenSize[0], screenSize[1])
+eyeconnection = 0 #just so I can work without actually importing eytracker stuff
 playerbody = PlayerCube(playersize_x, playersize_y, player_speed, screenSize[0]*0.5, screenSize[1] - playersize_y , screenSize)
 obstacleHandler = ObstacleList(obstacle_amount, screenSize, obstacle_speed, screenSize[1]/8 ,screenSize[0]/40 )
-gameloops = Gameloops(framerate, screenSize, game_display, clock, playerbody, obstacleHandler, Eyeconnection)
+gameloops = Gameloops(framerate, screenSize, game_display, clock, playerbody, obstacleHandler, eyeconnection)
+
 ##
 
 
 def main():
 
-    gameExit = False
-    gameLevel = 1
+    # eyeconnection.doSetup() # Perform Calibration
+    # eyeconnection.endSetup() # Start Pygame, start recording
 
+    gameExit = False
     while not gameExit: # outer loop for quitting
 
         obstacleHandler.restart()
@@ -69,7 +68,8 @@ def main():
         gameloops.instructionscreen()
 
         gameloops.levelLoop()
-
+        
         quit()
 
-main()
+if __name__ == "__main__":
+    main()
