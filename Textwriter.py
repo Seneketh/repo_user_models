@@ -40,19 +40,22 @@ class Textwriter(object):
         self.message_display('You died horribly', self.screenSize[0]/13, self.screenSize[0]/2, self.screenSize[1]/2, 1, black)
 
     def welcome(self):
-        return self.message_display('Endlessrunner of Doom',  self.screenSize[0]/20, self.screenSize[0]/2, self.screenSize[1]/4, 0.5, black)
+        return self.message_display('Endlessrunner of Doom',  self.screenSize[0]/20, self.screenSize[0]/2, self.screenSize[1]*0.25, 0.5, black)
+
+    def entryinstructions(self):
+        return self.message_display('Please enter the requested data and confirm with Enter',  self.screenSize[0]/45, self.screenSize[0]/2, self.screenSize[1]*0.33, 0.6, white)
 
     def start(self):
-        return self.message_display('Start Game', 30, self.screenSize[0]/2, self.screenSize[1]/2, 0, black)
+        return self.message_display('Start Game', self.screenSize[0]/40, self.screenSize[0]/2, self.screenSize[1]/2, 0, white)
 
     def exit(self):
-        return self.message_display('Exit Game', 30, self.screenSize[0]/2, self.screenSize[1]/2 + 50, 0, black)
+        return self.message_display('Exit Game  &  Save Data', self.screenSize[0]/40, self.screenSize[0]/2, self.screenSize[1]/2 + 100, 0, white)
 
     def back(self):
         return self.message_display('Back',  self.screenSize[0]/40, self.screenSize[0]*0.15, self.screenSize[1]*0.85, 0, black)
 
-    def next(self):
-        return self.message_display('Next', self.screenSize[0]/40, self.screenSize[0]*0.85, self.screenSize[1]*0.85, 0, black)
+    def acknowledge(self):
+        return self.message_display('Continue by pressing Enter', self.screenSize[0]/40, self.screenSize[0]*0.5, self.screenSize[1]*0.9, 0, black)
 
     def performance_counter(self, time):
-        self.message_display('You survived '+ str(time) + ' Seconds', 20, 140, 15, 0, red)
+        self.message_display('You survived '+ str(time) + ' Seconds',  self.screenSize[0]/85, 140, 15, 0, red)

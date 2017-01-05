@@ -3,6 +3,7 @@ from Textwriter import *
 from gamedisplay import *
 from Exptools import *
 import numpy
+import inputbox
 
 class Gameloops(object):
 
@@ -50,23 +51,27 @@ class Gameloops(object):
 
 
                 if mouse[0] > ExitBox[0] and mouse[0] < ExitBox[1] and mouse[1] > ExitBox[2] and mouse[1] < ExitBox[3] and click[0] == 1:
-
+                    self.exp_tools.datasaver()
                     quit()
 
                 if event.type == pygame.QUIT:
                     quit()
 
-    def instructionscreen(self):
+
+    def dataentryscreen(self):
 
         intro = True
         self.game_display.fill(menu_background)
         pygame.display.update()
 
-        self.textwriting.instructions()
+        self.textwriting.welcome()
+        self.textwriting.entryinstructions()
 
-        NextBox = self.textwriting.next()
+        #self.textwriting.instructions()
+        self.exp_tools.inp_id = (inputbox.ask(self.game_display, 'Your ID'))
+        self.exp_tools.inp_gender = (inputbox.ask(self.game_display, 'Gender'))
+        self.exp_tools.inp_age = (inputbox.ask(self.game_display, 'Age'))
 
-        BackBox = self.textwriting.back()
 
         pygame.display.update()
         self.clock.tick(self.menu_tick)
@@ -77,18 +82,35 @@ class Gameloops(object):
 
             for event in pygame.event.get():
 
-                if mouse[0] > NextBox[0] and mouse[0] < NextBox[1] and mouse[1] >NextBox[2] and mouse[1] < NextBox[3] and click[0] == 1 :
+                if click[0] == 1 :
                     intro = False
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-                        self.startscreen()
+                        intro = False
 
                     if event.key == pygame.K_RETURN:
                         intro = False
 
-                if mouse[0] > BackBox[0] and mouse[0] < BackBox[1] and mouse[1] > BackBox[2] and mouse[1] < BackBox[3] and click[0] == 1:
-                    self.startscreen()
+
+    def instructionscreen(self):
+
+        intro = True
+        self.game_display.fill(menu_background)
+        pygame.display.update()
+
+        self.textwriting.instructions()
+
+        self.textwriting.acknowledge()
+
+        pygame.display.update()
+        self.clock.tick(self.menu_tick)
+
+        while intro:
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_RETURN:
+                        intro = False
 
 
     def levelLoop(self):
@@ -102,8 +124,6 @@ class Gameloops(object):
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
-
-                        self.exp_tools.datasaver()
 
                         self.startscreen()
 
@@ -151,3 +171,16 @@ class Gameloops(object):
             # updating the display and wating for frame rate
             pygame.display.flip()
             self.clock.tick(self.framerate)
+
+    # def baselineLoop(self):
+    #
+    #     self.obstacleHandler.gravity = 21 #initial, hard difficulty
+    #
+    #     while self.obstacleHandler.gravity > 9:
+    #
+    #         self.obstacleHandler.gravity -= 5
+    #         self.obstacleHandler.restart()
+    #
+    #         while self.gameTime < 30:
+    #
+    #             self.levelLoop()

@@ -55,8 +55,13 @@ gameloops = Gameloops(framerate, screenSize, game_display, clock, playerbody, ob
 
 def main():
 
+    gameloops.dataentryscreen()
+
     # eyeconnection.doSetup() # Perform Calibration
     # eyeconnection.endSetup() # Start Pygame, start recording
+
+    gameloops.instructionscreen()
+    #gameloops.baselineLoop() #work in progress
 
     gameExit = False
     while not gameExit: # outer loop for quitting
@@ -65,10 +70,8 @@ def main():
 
         gameloops.startscreen()
 
-        gameloops.instructionscreen()
-
         gameloops.levelLoop()
-        
+
         quit()
 
 if __name__ == "__main__":

@@ -4,6 +4,11 @@ import time
 import datetime
 from random import randint
 import numpy as np
+import glob
+import pandas as pd
+import os
+
+
 class Exptools(object):
 
     def __init__(self, framerate, clock, playerbody, obstacleHandler, eyeconnection):
@@ -18,6 +23,9 @@ class Exptools(object):
         self.level_pupdil = []
         self.levelTime = 0
         self.gameTime = 0
+        self.inp_id = ''
+        self.gender = ''
+        self.age = ''
 
     def pupdil_get(self, testmode = True):
         '''use in pupdil_apnd'''
@@ -40,7 +48,10 @@ class Exptools(object):
         self.level_count += 1 # new level
 
         self.dict_list.append(
-        {'level': self.level_count,
+        {'ID': self.inp_id,
+        'gender': self.inp_gender,
+        'age': self.inp_age,
+        'level': self.level_count,
         'gametime': self.gameTime,
         'leveltime': self.levelTime,
         'mean_pupilsize': np.mean(self.level_pupdil)} )
@@ -53,10 +64,28 @@ class Exptools(object):
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('__%d-%m-%Y__%H:%M:%S')
 
         fieldnames = sorted(list(set(k for d in self.dict_list for k in d)))
-        with open("testdata" + timestamp + ".csv", 'w') as out_file:
+        with open(self.inp_id + timestamp + ".csv", 'w') as out_file:
             writer = csv.DictWriter(out_file, fieldnames=fieldnames, dialect='excel')
             writer.writeheader()
             writer.writerows(self.dict_list)
+
+def csv_merger():
+    '''Grabs all csv files in current directory and merges them in one csv. Only works when all files have the same columns. Alternatively, a pandas dataframe can be returned for yummie analysis.'''
+
+    path = os.getcwd()
+    allFiles = glob.glob(path + "/*.csv")
+    frame = pd.DataFrame()
+    list_ = []
+    for file_ in allFiles:
+        df = pd.read_csv(file_,index_col=None, header=0)
+        list_.append(df)
+        frame = pd.concat(list_)
+        frame.to_csv("MERGED.csv")
+    print('\n\n %d files successfully merged! Do the Science brah! \n\n') %( len(allFiles))
+
+#csv_merger()
+
+
 
 
 # pupdil = self.Eyeconnection.getInfo()
