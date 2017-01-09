@@ -55,22 +55,23 @@ gameloops = Gameloops(framerate, screenSize, game_display, clock, playerbody, ob
 
 def main():
 
+    gameloops.startscreen()
     gameloops.dataentryscreen()
 
     # eyeconnection.doSetup() # Perform Calibration
     # eyeconnection.endSetup() # Start Pygame, start recording
 
     gameloops.instructionscreen()
-    #gameloops.baselineLoop() #work in progress
+    gameloops.baselineLoop() #work in progress
 
     gameExit = False
     while not gameExit: # outer loop for quitting
 
         obstacleHandler.restart()
 
-        gameloops.startscreen()
 
-        gameloops.levelLoop()
+        gameloops.exp_tools.baselining = False
+        gameloops.levelLoop(gameloops.exp_tools.baselining)
 
         quit()
 

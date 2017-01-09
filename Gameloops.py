@@ -17,8 +17,9 @@ class Gameloops(object):
         self.obstacleHandler = obstacleHandler
         self.framerate = framerate
         self.eyeconnection = eyeconnection
-        self.exp_tools = Exptools(framerate, clock, playerbody, obstacleHandler, eyeconnection)
+        self.exp_tools = Exptools(self.framerate, self.clock, self.playerbody, self.obstacleHandler, self.eyeconnection)
         self.menu_tick = 15
+
 
     def startscreen(self):
 
@@ -67,7 +68,7 @@ class Gameloops(object):
         self.textwriting.welcome()
         self.textwriting.entryinstructions()
 
-        #self.textwriting.instructions()
+
         self.exp_tools.inp_id = (inputbox.ask(self.game_display, 'Your ID'))
         self.exp_tools.inp_gender = (inputbox.ask(self.game_display, 'Gender'))
         self.exp_tools.inp_age = (inputbox.ask(self.game_display, 'Age'))
@@ -77,13 +78,8 @@ class Gameloops(object):
         self.clock.tick(self.menu_tick)
 
         while intro:
-            mouse = pygame.mouse.get_pos()
-            click = pygame.mouse.get_pressed()
 
             for event in pygame.event.get():
-
-                if click[0] == 1 :
-                    intro = False
 
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_ESCAPE:
@@ -113,7 +109,7 @@ class Gameloops(object):
                         intro = False
 
 
-    def levelLoop(self):
+    def levelLoop(self, baselining):
 
         levelQuit = False
         movement = 0 #gets only initialized here. is used in level loop
@@ -161,6 +157,7 @@ class Gameloops(object):
                 self.obstacleHandler.restart()
                 self.textwriting.player_death()
 
+
             self.obstacleHandler.update()
             self.playerbody.changePosition(movement)
 
@@ -172,15 +169,22 @@ class Gameloops(object):
             pygame.display.flip()
             self.clock.tick(self.framerate)
 
-    # def baselineLoop(self):
-    #
-    #     self.obstacleHandler.gravity = 21 #initial, hard difficulty
-    #
-    #     while self.obstacleHandler.gravity > 9:
-    #
-    #         self.obstacleHandler.gravity -= 5
-    #         self.obstacleHandler.restart()
-    #
-    #         while self.gameTime < 30:
-    #
-    #             self.levelLoop()
+            if baselining == True and self.exp_tools.gameTime > self.exp_tools.blTime:
+                break
+
+    def baselineLoop(self):
+
+        self.exp_tools.baselining = True
+
+        self.obstacleHandler.gravity = self.exp_tools.bldifficulty #initial, difficulty
+
+        while self.exp_tools.bldifficulty > 4:
+
+            self.obstacleHandler.gravity -= 2
+            self.exp_tools.bldifficulty -= 2
+
+            self.obstacleHandler.restart()
+
+            self.levelLoop(self.exp_tools.baselining)
+
+        self.exp_tools.exptools_restart()

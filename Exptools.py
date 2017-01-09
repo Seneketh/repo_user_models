@@ -26,6 +26,9 @@ class Exptools(object):
         self.inp_id = ''
         self.gender = ''
         self.age = ''
+        self.baselining = False
+        self.blTime = 2 #time for each difficulty in baselineloop
+        self.bldifficulty = 20
 
     def pupdil_get(self, testmode = True):
         '''use in pupdil_apnd'''
@@ -51,6 +54,8 @@ class Exptools(object):
         {'ID': self.inp_id,
         'gender': self.inp_gender,
         'age': self.inp_age,
+        'baselining': self.baselining,
+        'gravity': self.bldifficulty,
         'level': self.level_count,
         'gametime': self.gameTime,
         'leveltime': self.levelTime,
@@ -69,6 +74,14 @@ class Exptools(object):
             writer.writeheader()
             writer.writerows(self.dict_list)
 
+    def exptools_restart(self):
+        self.level_count = 0
+        self.pupdil = 0
+        self.dict_list = []
+        self.level_pupdil = []
+        self.levelTime = 0
+        self.gameTime = 0
+
 def csv_merger():
     '''Grabs all csv files in current directory and merges them in one csv. Only works when all files have the same columns. Alternatively, a pandas dataframe can be returned for yummie analysis.'''
 
@@ -82,6 +95,7 @@ def csv_merger():
         frame = pd.concat(list_)
         frame.to_csv("MERGED.csv")
     print('\n\n %d files successfully merged! Do the Science brah! \n\n') %( len(allFiles))
+
 
 #csv_merger()
 
