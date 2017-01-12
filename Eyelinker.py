@@ -1,4 +1,4 @@
-#from pylink import *
+from pylink import *
 # MUST BE UNCOMMENTED WHEN WHEN WORKING WITH EYETRACKER!!
 import pygame
 

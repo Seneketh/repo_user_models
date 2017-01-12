@@ -4,6 +4,8 @@ from gamedisplay import *
 from Exptools import *
 import numpy
 import inputbox
+from random import randint
+
 
 class Gameloops(object):
 
@@ -114,8 +116,19 @@ class Gameloops(object):
         levelQuit = False
         movement = 0 #gets only initialized here. is used in level loop
 
+        ## workings of model under normal runtime conditions
+        if not baselining:
+            ##setting new gravity and doubling it for the next level
+            self.obstacleHandler.gravity = self.obstacleHandler.nextGravity
+            
+            if self.obstacleHandler.gravity <= 15:
+                self.obstacleHandler.gravity = 15
+                
+            self.obstacleHandler.nextGravity = self.obstacleHandler.gravity*1.1
+            
         while not levelQuit: #inner  loop for the levels
             self.exp_tools.levelTime += 1/float(self.framerate)
+            self.exp_tools.deathTime += 1/float(self.framerate)
 
             for event in pygame.event.get():
                 if event.type == pygame.KEYDOWN:
@@ -139,11 +152,21 @@ class Gameloops(object):
 
             #checking collisions before updating screen
             collision = self.playerbody.detectCollision(self.obstacleHandler.obstacles)
-
+            ## important for eyetracking
             self.exp_tools.pupdil_get()
-
-            self.exp_tools.pupdil_apnd()
-
+            ## important for eytracking
+            dilationlist = self.exp_tools.pupdil_apnd()
+            #dilationlist = [] ##debugging thingy for uncoupling eyelink
+            if len(dilationlist) >= 10:
+                reference = numpy.nanmean(dilationlist[-9:])
+                if baselining:
+                    self.exp_tools.smooth_dil.append(reference)
+                if reference > self.exp_tools.threshold and not baselining:
+                    print("ping")
+                    ##update for the ingame gravity
+                    self.exp_tools.threscount += 1
+                    self.obstacleHandler.nextGravity -= numpy.divide(1.0, self.exp_tools.updateTime * self.framerate*0.1)*self.obstacleHandler.gravity*0.1
+                
             if collision:
 
                 self.exp_tools.gameTime += self.exp_tools.levelTime
@@ -152,8 +175,7 @@ class Gameloops(object):
 
                 #level reset:
                 movement = 0
-                self.exp_tools.levelTime = 0
-                self.exp_tools.level_pupdil = []
+                self.exp_tools.deathTime = 0
                 self.obstacleHandler.restart()
                 self.textwriting.player_death()
 
@@ -163,13 +185,23 @@ class Gameloops(object):
 
             # graphics call
             updateScreen(self.game_display, self.playerbody, self.obstacleHandler.obstacles)
-            self.textwriting.performance_counter(round(self.exp_tools.levelTime, 3))
+            self.textwriting.performance_counter(self.obstacleHandler.gravity)
 
             # updating the display and wating for frame rate
             pygame.display.flip()
             self.clock.tick(self.framerate)
 
-            if baselining == True and self.exp_tools.gameTime > self.exp_tools.blTime:
+            if self.exp_tools.levelTime > self.exp_tools.updateTime:
+                self.exp_tools.gameTime += self.exp_tools.levelTime
+
+                self.exp_tools.datalogger()
+                
+
+                #level reset:
+                
+                self.exp_tools.threshcount = 0+6
+                self.exp_tools.levelTime = 0
+                self.exp_tools.level_pupdil = []
                 break
 
     def baselineLoop(self):
@@ -178,13 +210,34 @@ class Gameloops(object):
 
         self.obstacleHandler.gravity = self.exp_tools.bldifficulty #initial, difficulty
 
-        while self.exp_tools.bldifficulty > 4:
+        while self.exp_tools.bldifficulty >= 20:
 
-            self.obstacleHandler.gravity -= 2
-            self.exp_tools.bldifficulty -= 2
+            self.exp_tools.bldifficulty -= 2.5
+            self.obstacleHandler.gravity = self.exp_tools.bldifficulty
 
-            self.obstacleHandler.restart()
+            #self.obstacleHandler.restart()
 
             self.levelLoop(self.exp_tools.baselining)
 
+        self.exp_tools.set_parameters()
+        self.exp_tools.exptools_restart()
+        
+        
+    def controlLoop(self):
+
+        self.exp_tools.levelCounter = 0
+        self.exp_tools.baselining = True
+
+        self.obstacleHandler.gravity = self.exp_tools.bldifficulty #initial, difficulty
+
+        while self.exp_tools.levelCounter <= 15:
+
+            self.exp_tools.bldifficulty = randint(15, 50)
+            self.obstacleHandler.gravity = self.exp_tools.bldifficulty
+
+            #self.obstacleHandler.restart()
+
+            self.levelLoop(self.exp_tools.baselining)
+
+        self.exp_tools.set_parameters()
         self.exp_tools.exptools_restart()

@@ -56,9 +56,11 @@ class ObstacleList(object):
         self.maxLocation = screensize[1]
         self.minLocation = 0
         self.gravity = gravity
+        self.nextGravity = 11
         self.xRange = screensize[0]
         self.cubex = cubex
         self.cubey = cubey
+        self.padding = 2
 
     def populate(self):
         for i in range(self.maxObstacles):
@@ -71,8 +73,11 @@ class ObstacleList(object):
 
 
     def update(self):
-        if len(self.obstacles) < self.maxObstacles:
+        self.padding -= 1
+        
+        if len(self.obstacles) < self.maxObstacles and self.padding == 0:
             coords = coordMaker(self.screenSize)
+            
 
             xpos = coords[0]
             ypos = coords[1]
@@ -83,7 +88,10 @@ class ObstacleList(object):
             if cube.yloc > self.maxLocation:
                 self.obstacles.remove(cube)
             cube.changePostion(self.gravity)
+            
+        if self.padding < 0:
+            self.padding = 1
 
     def restart(self):
         self.obstacles = []
-        self.populate()
+        

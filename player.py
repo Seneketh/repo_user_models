@@ -36,4 +36,6 @@ class PlayerCube(object):
                     return(True)
                 elif self.xloc + self.xsize/2 > cube.xloc - bounds >= self.xloc - self.xsize/2:
                     return (True)
+                elif cube.xloc - bounds < self.xloc < cube.xloc + bounds :
+                    return (True)
         return False

@@ -21,6 +21,8 @@ class Exptools(object):
         self.pupdil = 0
         self.dict_list = []
         self.level_pupdil = []
+        self.smooth_dil = []
+        self.deathTime = 0
         self.levelTime = 0
         self.gameTime = 0
         self.inp_id = ''
@@ -28,9 +30,13 @@ class Exptools(object):
         self.age = ''
         self.baselining = False
         self.blTime = 2 #time for each difficulty in baselineloop
-        self.bldifficulty = 20
+        self.updateTime = 2 #model update rate.
+        self.levelCounter = 0 #amount of update moments passed
+        self.bldifficulty = 65
+        self.threshold = None
+        self.threscount = 0
 
-    def pupdil_get(self, testmode = True):
+    def pupdil_get(self, testmode = False):
         '''use in pupdil_apnd'''
         if testmode == True:
             self.pupdil = randint(1000, 2000)
@@ -59,28 +65,39 @@ class Exptools(object):
         'level': self.level_count,
         'gametime': self.gameTime,
         'leveltime': self.levelTime,
-        'mean_pupilsize': np.mean(self.level_pupdil)} )
-        #'level_pupdilations': self.level_pupdil
+        'mean_pupilsize': np.mean(self.level_pupdil),
+        'threshold':self.threshold,
+        'threscount':self.threscount,
+        'level_pupdilations': self.level_pupdil})
         return self.dict_list
 
-    def datasaver(self):
+    def datasaver(self,  note= ""):
         '''on exit'''
 
         timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('__%d-%m-%Y__%H:%M:%S')
 
         fieldnames = sorted(list(set(k for d in self.dict_list for k in d)))
-        with open(self.inp_id + timestamp + ".csv", 'w') as out_file:
+        with open(self.inp_id +  timestamp + "_" + note+ ".csv", 'w') as out_file:
             writer = csv.DictWriter(out_file, fieldnames=fieldnames, dialect='excel')
             writer.writeheader()
             writer.writerows(self.dict_list)
 
     def exptools_restart(self):
+        self.datasaver()
         self.level_count = 0
         self.pupdil = 0
         self.dict_list = []
         self.level_pupdil = []
         self.levelTime = 0
         self.gameTime = 0
+        
+    def set_parameters(self):
+        self.threshold = 0
+        
+        
+        if self.smooth_dil != None:
+            self.threshold = np.mean(self.smooth_dil) + np.std(self.smooth_dil)*1.28
+        print(self.threshold)
 
 def csv_merger():
     '''Grabs all csv files in current directory and merges them in one csv. Only works when all files have the same columns. Alternatively, a pandas dataframe can be returned for yummie analysis.'''
@@ -95,6 +112,7 @@ def csv_merger():
         frame = pd.concat(list_)
         frame.to_csv("MERGED.csv")
     print('\n\n %d files successfully merged! Do the Science brah! \n\n') %( len(allFiles))
+
 
 
 #csv_merger()
