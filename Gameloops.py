@@ -24,7 +24,7 @@ class Gameloops(object):
 
 
     def startscreen(self):
-
+        pygame.mouse.set_visible(True)
         intro = True
         self.game_display.fill(menu_background)
         pygame.display.update()
@@ -111,19 +111,20 @@ class Gameloops(object):
                         intro = False
 
 
-    def levelLoop(self, baselining):
+    def levelLoop(self, baselining, currentmove):
 
         levelQuit = False
-        movement = 0 #gets only initialized here. is used in level loop
+        movement = currentmove #gets only initialized here. is used in level loop
 
         ## workings of model under normal runtime conditions
         if not baselining:
             ##setting new gravity and doubling it for the next level
-            self.obstacleHandler.gravity = self.obstacleHandler.nextGravity
+            self.obstacleHandler.gravity = round(self.obstacleHandler.nextGravity, 3)
             
             if self.obstacleHandler.gravity <= 15:
                 self.obstacleHandler.gravity = 15
                 
+            self.exp_tools.bldifficulty = self.obstacleHandler.gravity
             self.obstacleHandler.nextGravity = self.obstacleHandler.gravity*1.1
             
         while not levelQuit: #inner  loop for the levels
@@ -185,7 +186,6 @@ class Gameloops(object):
 
             # graphics call
             updateScreen(self.game_display, self.playerbody, self.obstacleHandler.obstacles)
-            self.textwriting.performance_counter(self.obstacleHandler.gravity)
 
             # updating the display and wating for frame rate
             pygame.display.flip()
@@ -202,22 +202,26 @@ class Gameloops(object):
                 self.exp_tools.threshcount = 0+6
                 self.exp_tools.levelTime = 0
                 self.exp_tools.level_pupdil = []
+                return movement
                 break
 
     def baselineLoop(self):
-
+        
+        self.exp_tools.levelCounter = 0
         self.exp_tools.baselining = True
+        self.exp_tools.bldifficulty = 65
 
         self.obstacleHandler.gravity = self.exp_tools.bldifficulty #initial, difficulty
+        curmove = 0
 
-        while self.exp_tools.bldifficulty >= 20:
+        while self.exp_tools.bldifficulty >= 15:
 
             self.exp_tools.bldifficulty -= 2.5
             self.obstacleHandler.gravity = self.exp_tools.bldifficulty
 
             #self.obstacleHandler.restart()
 
-            self.levelLoop(self.exp_tools.baselining)
+            curmove = self.levelLoop(self.exp_tools.baselining, curmove)
 
         self.exp_tools.set_parameters()
         self.exp_tools.exptools_restart()
@@ -227,6 +231,7 @@ class Gameloops(object):
 
         self.exp_tools.levelCounter = 0
         self.exp_tools.baselining = True
+        self.exp_tools.bldifficulty = 65
 
         self.obstacleHandler.gravity = self.exp_tools.bldifficulty #initial, difficulty
 

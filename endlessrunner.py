@@ -52,20 +52,24 @@ def main():
     gameloops.dataentryscreen()
 
     gameloops.instructionscreen()
+    pygame.mouse.set_visible(False)
     gameloops.baselineLoop() #work in progress
 
     gameExit = False
+    curmove = 0
     while not gameExit: # outer loop for quitting
 
         
         gameloops.exp_tools.baselining = False
-        gameloops.levelLoop(gameloops.exp_tools.baselining)
+        curmove = gameloops.levelLoop(gameloops.exp_tools.baselining, curmove)
         
         if gameloops.exp_tools.gameTime > 200:
             gameExit = True
     
     gameloops.exp_tools.datalogger()
     gameloops.exp_tools.datasaver()
+    
+    gameloops.baselineLoop()
     pygame.quit()
 
 if __name__ == "__main__":
