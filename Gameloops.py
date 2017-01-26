@@ -159,8 +159,15 @@ class Gameloops(object):
             dilationlist = self.exp_tools.pupdil_apnd()
             #dilationlist = [] ##debugging thingy for uncoupling eyelink
             if len(dilationlist) >= 10:
-                reference = numpy.nanmean(dilationlist[-9:])
-                if baselining:
+                smoothList = []
+                for item in dilationlist[-9:]:
+                    if item != 0:
+                        smoothList.append(item)
+                
+                reference = 0
+                if len(smoothList) > 0:
+                    reference = numpy.nanmean(smoothList)
+                if baselining and reference > 1:
                     self.exp_tools.smooth_dil.append(reference)
                 if reference > self.exp_tools.threshold and not baselining:
                     print("ping")
@@ -170,12 +177,11 @@ class Gameloops(object):
                 
             if collision:
 
-                self.exp_tools.gameTime += self.exp_tools.levelTime
-
-                self.exp_tools.datalogger()
+                ##self.exp_tools.datalogger()
 
                 #level reset:
                 movement = 0
+                self.exp_tools.deathCount += 1
                 self.exp_tools.deathTime = 0
                 self.obstacleHandler.restart()
                 self.textwriting.player_death()
@@ -199,7 +205,7 @@ class Gameloops(object):
 
                 #level reset:
                 
-                self.exp_tools.threshcount = 0+6
+                self.exp_tools.threshcount = 0
                 self.exp_tools.levelTime = 0
                 self.exp_tools.level_pupdil = []
                 return movement
@@ -207,7 +213,8 @@ class Gameloops(object):
 
     def baselineLoop(self):
         
-        self.exp_tools.levelCounter = 0
+        self.exp_tools.level_count = 0
+        self.exp_tools.deathCount = 0
         self.exp_tools.baselining = True
         self.exp_tools.bldifficulty = 65
 
@@ -229,20 +236,21 @@ class Gameloops(object):
         
     def controlLoop(self):
 
-        self.exp_tools.levelCounter = 0
+        self.exp_tools.level_count = 0
         self.exp_tools.baselining = True
-        self.exp_tools.bldifficulty = 65
+        self.exp_tools.control = True
+        self.exp_tools.deathCount = 0
 
         self.obstacleHandler.gravity = self.exp_tools.bldifficulty #initial, difficulty
+        curmove = 0
 
-        while self.exp_tools.levelCounter <= 15:
+        while self.exp_tools.level_count <= 90:
 
             self.exp_tools.bldifficulty = randint(15, 50)
             self.obstacleHandler.gravity = self.exp_tools.bldifficulty
 
             #self.obstacleHandler.restart()
 
-            self.levelLoop(self.exp_tools.baselining)
+            curmove = self.levelLoop(self.exp_tools.baselining, curmove)
 
-        self.exp_tools.set_parameters()
         self.exp_tools.exptools_restart()

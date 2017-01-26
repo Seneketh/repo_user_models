@@ -57,17 +57,21 @@ def main():
 
     gameExit = False
     curmove = 0
+    gameloops.exp_tools.level_count = 0
+    obstacleHandler.gravity = 15
     while not gameExit: # outer loop for quitting
 
         
         gameloops.exp_tools.baselining = False
         curmove = gameloops.levelLoop(gameloops.exp_tools.baselining, curmove)
         
-        if gameloops.exp_tools.gameTime > 200:
+        if gameloops.exp_tools.level_count> 90:
             gameExit = True
     
     gameloops.exp_tools.datalogger()
     gameloops.exp_tools.datasaver()
+    
+    gameloops.controlLoop()
     
     gameloops.baselineLoop()
     pygame.quit()

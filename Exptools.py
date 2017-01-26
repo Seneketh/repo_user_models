@@ -23,18 +23,21 @@ class Exptools(object):
         self.level_pupdil = []
         self.smooth_dil = []
         self.deathTime = 0
+        self.deathCount = 0
         self.levelTime = 0
         self.gameTime = 0
         self.inp_id = ''
         self.gender = ''
         self.age = ''
         self.baselining = False
+        self.control = False
         self.blTime = 2 #time for each difficulty in baselineloop
         self.updateTime = 2 #model update rate.
         self.levelCounter = 0 #amount of update moments passed
         self.bldifficulty = 65
         self.threshold = None
         self.threscount = 0
+        
 
     def pupdil_get(self, testmode = False):
         '''use in pupdil_apnd'''
@@ -61,10 +64,12 @@ class Exptools(object):
         'gender': self.inp_gender,
         'age': self.inp_age,
         'baselining': self.baselining,
+        'control': self.control,
         'gravity': self.bldifficulty,
         'level': self.level_count,
         'gametime': self.gameTime,
         'leveltime': self.levelTime,
+        'deaths': self.deathCount,
         'mean_pupilsize': np.mean(self.level_pupdil),
         'threshold':self.threshold,
         'threscount':self.threscount,
@@ -85,6 +90,8 @@ class Exptools(object):
     def exptools_restart(self):
         self.datasaver()
         self.level_count = 0
+        self.deathCount = 0
+        self.control = False
         self.pupdil = 0
         self.dict_list = []
         self.level_pupdil = []
